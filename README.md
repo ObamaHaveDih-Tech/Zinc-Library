@@ -2,8 +2,8 @@
 # 🎨 Zinc Library Documentation
 
 **Version:** 1.0.0  
-**Author:** Your Name  
-**License:** MIT
+**Author:** obamahavedih-tech
+**License:** idk
 
 Welcome to the Zinc Library documentation! Zinc is a modern, lightweight UI library for Roblox client-side executors with a focus on clean design, smooth animations, and ease of use.
 
@@ -692,18 +692,12 @@ MIT License - Feel free to use this library in your projects!
 
 ---
 
-## 💬 Support
-
-For support, questions, or feature requests:
-- Open an issue on GitHub
-- Contact via Discord: [Your Discord]
-- Join our community: [Your Server]
 
 ---
 
 ## 🌟 Credits
 
-Created with ❤️ by [Your Name]
+Created with ❤️ by [Dih]
 
 Special thanks to all contributors and testers!
 
