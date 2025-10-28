@@ -1,9 +1,8 @@
-
 # 🎨 Zinc Library Documentation
 
-**Version:** 1.0.0  
-**Author:** obamahavedih-tech
-**License:** idk
+**Version:** 1.0.1 
+**Author:** obemahavedih-tech
+**License:** MIT
 
 Welcome to the Zinc Library documentation! Zinc is a modern, lightweight UI library for Roblox client-side executors with a focus on clean design, smooth animations, and ease of use.
 
@@ -100,6 +99,26 @@ Theme = "Serenity"
 
 ```lua
 Theme = "Forest"
+```
+
+#### Mocha Theme ✨ NEW
+- Warm earthy tones
+- Neutrals like cream and beige
+- Sage and terracotta accents
+- Comfortable and sophisticated
+
+```lua
+Theme = "Mocha"
+```
+
+#### Crimson Theme ✨ NEW
+- Bold red accents
+- Dark dramatic background
+- High contrast
+- Eye-catching design
+
+```lua
+Theme = "Crimson"
 ```
 
 ---
@@ -664,10 +683,10 @@ Label:SetText("New label text")
 
 ## 📝 Changelog
 
-### Version 1.0.0
+### Version 1.0.1
 - Initial release
-- Added Dark, Serenity, and Forest themes
-- Implemented core components: Button, Toggle, Slider, TextInput, Label
+- Added Mocha,Crimson Themes
+- Implemented core components: Button, Toggle, Slider, TextInput, Label also added dropdown menus and notifs
 - Added draggable window functionality
 - Implemented tab system
 - Added minimize/maximize animation
@@ -692,12 +711,18 @@ MIT License - Feel free to use this library in your projects!
 
 ---
 
+## 💬 Support
+
+For support, questions, or feature requests:
+- Open an issue on GitHub
+- Contact via Discord: [Your Discord]
+- Join our community: [Your Server]
 
 ---
 
 ## 🌟 Credits
 
-Created with ❤️ by [Dih]
+Created with ❤️ by [Your Name]
 
 Special thanks to all contributors and testers!
 
