@@ -1,367 +1,530 @@
-# 🚀 Zinc Library - Quick Reference Guide
+--[[
+    Zinc Library - Advanced Example Script
+    
+    This script demonstrates advanced usage patterns and real-world scenarios
+    for the Zinc UI Library.
+    
+    Features:
+    - Player ESP system
+    - Auto-farm with dropdown selection
+    - Settings persistence (in-memory)
+    - Dynamic player list
+    - Keybind system
+    - Advanced notifications
+]]
 
-## 📌 Loading the Library
-
-```lua
+-- Load the library
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/1kJf0GJD"))()
-```
 
----
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
-## 🪟 Create Window
-
-```lua
+-- Create window with Mocha theme for a unique look
 local Window = Library:CreateWindow({
-    Name = "Window Title",
-    Theme = "Dark" -- Dark, Serenity, Forest, Mocha, Crimson
+    Name = "Advanced Example Hub",
+    Theme = "Mocha" -- Try "Crimson" for a bold look!
 })
-```
 
----
-
-## 📑 Create Tab
-
-```lua
-local Tab = Window:CreateTab("Tab Name")
-```
-
----
-
-## 🔔 Send Notification
-
-```lua
+-- Welcome notification
 Window:Notify({
-    Title = "Title",
-    Message = "Message text",
-    Duration = 3,
-    Type = "Info" -- Info, Success, Warning, Error
+    Title = "Welcome!",
+    Message = "Advanced example script loaded successfully",
+    Duration = 4,
+    Type = "Success"
 })
-```
 
----
+-- ═══════════════════════════════════════════════════════════════
+-- PLAYER TAB - Advanced Player Modifications
+-- ═══════════════════════════════════════════════════════════════
+local PlayerTab = Window:CreateTab("Player")
 
-## 🔘 Button
-
-```lua
-Tab:CreateButton({
-    Name = "Button Text",
-    Callback = function()
-        -- Your code here
-    end
+PlayerTab:CreateLabel({
+    Text = "Character Modifications"
 })
-```
 
----
+-- Preset dropdown for common configurations
+local presets = {
+    ["Default"] = {walkspeed = 16, jumppower = 50, fov = 70},
+    ["Speed Runner"] = {walkspeed = 50, jumppower = 80, fov = 90},
+    ["Explorer"] = {walkspeed = 30, jumppower = 100, fov = 85},
+    ["Combat"] = {walkspeed = 25, jumppower = 60, fov = 80}
+}
 
-## 🔄 Toggle
+local currentPreset = "Default"
 
-```lua
-local Toggle = Tab:CreateToggle({
-    Name = "Toggle Name",
-    Default = false,
+PlayerTab:CreateDropdown({
+    Name = "Quick Presets",
+    Options = {"Default", "Speed Runner", "Explorer", "Combat"},
+    Default = "Default",
     Callback = function(value)
-        print(value) -- true or false
-    end
-})
-
--- Methods
-Toggle:SetValue(true)
-```
-
----
-
-## 📊 Slider
-
-```lua
-local Slider = Tab:CreateSlider({
-    Name = "Slider Name",
-    Range = {0, 100},
-    Default = 50,
-    Callback = function(value)
-        print(value) -- Number between range
-    end
-})
-
--- Methods
-Slider:SetValue(75)
-```
-
----
-
-## 📝 Text Input
-
-```lua
-local Input = Tab:CreateTextInput({
-    Name = "Input Name",
-    PlaceholderText = "Enter text...",
-    Callback = function(text)
-        print(text) -- String value
-    end
-})
-
--- Methods
-local text = Input:GetText()
-Input:SetText("New text")
-```
-
----
-
-## 📋 Dropdown
-
-```lua
-local Dropdown = Tab:CreateDropdown({
-    Name = "Dropdown Name",
-    Options = {"Option 1", "Option 2", "Option 3"},
-    Default = "Option 1",
-    Callback = function(value)
-        print(value) -- Selected option
-    end
-})
-
--- Methods
-Dropdown:SetValue("Option 2")
-local selected = Dropdown:GetValue()
-Dropdown:Refresh({"New", "Options", "List"})
-```
-
----
-
-## 🏷️ Label
-
-```lua
-local Label = Tab:CreateLabel({
-    Text = "Label text"
-})
-
--- Methods
-Label:SetText("New text")
-```
-
----
-
-## 🎨 Available Themes
-
-| Theme | Description |
-|-------|-------------|
-| `Dark` | Modern dark with blue accents (default) |
-| `Serenity` | Clean white/light theme |
-| `Forest` | Nature-inspired green |
-| `Mocha` | Warm earthy tones |
-| `Crimson` | Bold red theme |
-
----
-
-## 💡 Common Patterns
-
-### Player Modification
-```lua
-local player = game.Players.LocalPlayer
-if player.Character and player.Character:FindFirstChild("Humanoid") then
-    player.Character.Humanoid.WalkSpeed = 50
-end
-```
-
-### Toggling Features
-```lua
-local enabled = false
-Tab:CreateToggle({
-    Name = "Feature",
-    Default = false,
-    Callback = function(value)
-        enabled = value
-        if enabled then
-            -- Enable logic
-        else
-            -- Disable logic
+        currentPreset = value
+        local preset = presets[value]
+        
+        local player = Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = preset.walkspeed
+            player.Character.Humanoid.JumpPower = preset.jumppower
+            workspace.CurrentCamera.FieldOfView = preset.fov
+            
+            Window:Notify({
+                Title = "Preset Applied",
+                Message = "Loaded " .. value .. " configuration",
+                Duration = 2,
+                Type = "Success"
+            })
         end
     end
 })
-```
 
-### Dynamic Dropdowns
-```lua
-local playerList = {}
-for _, player in pairs(game.Players:GetPlayers()) do
-    table.insert(playerList, player.Name)
-end
-
-local Dropdown = Tab:CreateDropdown({
-    Name = "Players",
-    Options = playerList,
-    Default = playerList[1],
-    Callback = function(value) end
+-- Individual controls for fine-tuning
+local walkspeedSlider = PlayerTab:CreateSlider({
+    Name = "Walkspeed",
+    Range = {16, 100},
+    Default = 16,
+    Callback = function(value)
+        local player = Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = value
+        end
+    end
 })
 
--- Update when players join/leave
-game.Players.PlayerAdded:Connect(function()
-    -- Refresh dropdown
-end)
-```
+local jumppowerSlider = PlayerTab:CreateSlider({
+    Name = "Jump Power",
+    Range = {50, 200},
+    Default = 50,
+    Callback = function(value)
+        local player = Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = value
+        end
+    end
+})
 
-### Updating Labels Dynamically
-```lua
-local Label = Tab:CreateLabel({Text = "Status: Idle"})
+-- Advanced features
+PlayerTab:CreateLabel({
+    Text = "Advanced Features"
+})
 
-spawn(function()
-    while wait(1) do
-        Label:SetText("Time: " .. os.date("%X"))
+local infiniteJumpEnabled = false
+PlayerTab:CreateToggle({
+    Name = "Infinite Jump",
+    Default = false,
+    Callback = function(value)
+        infiniteJumpEnabled = value
+        Window:Notify({
+            Title = "Infinite Jump",
+            Message = value and "Enabled" or "Disabled",
+            Duration = 2,
+            Type = value and "Success" or "Info"
+        })
+    end
+})
+
+UserInputService.JumpRequest:Connect(function()
+    if infiniteJumpEnabled then
+        local player = Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
     end
 end)
-```
 
-### Error Handling
-```lua
-Tab:CreateButton({
-    Name = "Safe Action",
-    Callback = function()
-        local success, err = pcall(function()
-            -- Your code here
-        end)
+local noclipEnabled = false
+local noclipConnection
+
+PlayerTab:CreateToggle({
+    Name = "Noclip",
+    Default = false,
+    Callback = function(value)
+        noclipEnabled = value
         
-        if success then
+        if noclipEnabled then
+            noclipConnection = RunService.Stepped:Connect(function()
+                local player = Players.LocalPlayer
+                if player and player.Character then
+                    for _, part in pairs(player.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
+                    end
+                end
+            end)
+            
             Window:Notify({
-                Title = "Success",
-                Message = "Action completed",
+                Title = "Noclip",
+                Message = "Walk through walls enabled",
                 Duration = 2,
                 Type = "Success"
             })
         else
+            if noclipConnection then
+                noclipConnection:Disconnect()
+            end
+            
+            local player = Players.LocalPlayer
+            if player and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
+            
+            Window:Notify({
+                Title = "Noclip",
+                Message = "Collision restored",
+                Duration = 2,
+                Type = "Info"
+            })
+        end
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- TELEPORT TAB - Location Management
+-- ═══════════════════════════════════════════════════════════════
+local TeleportTab = Window:CreateTab("Teleport")
+
+TeleportTab:CreateLabel({
+    Text = "Save and teleport to custom locations"
+})
+
+-- Saved locations system
+local savedLocations = {
+    ["Spawn"] = Vector3.new(0, 10, 0)
+}
+
+local function updateLocationDropdown(dropdown)
+    local locationNames = {}
+    for name, _ in pairs(savedLocations) do
+        table.insert(locationNames, name)
+    end
+    table.sort(locationNames)
+    dropdown:Refresh(locationNames)
+end
+
+local teleportDropdown = TeleportTab:CreateDropdown({
+    Name = "Saved Locations",
+    Options = {"Spawn"},
+    Default = "Spawn",
+    Callback = function(value)
+        -- Selection changed
+    end
+})
+
+TeleportTab:CreateButton({
+    Name = "Teleport to Selected",
+    Callback = function()
+        local selected = teleportDropdown:GetValue()
+        local position = savedLocations[selected]
+        
+        if position then
+            local player = Players.LocalPlayer
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = CFrame.new(position)
+                
+                Window:Notify({
+                    Title = "Teleported",
+                    Message = "Teleported to " .. selected,
+                    Duration = 2,
+                    Type = "Success"
+                })
+            end
+        else
             Window:Notify({
                 Title = "Error",
-                Message = "Action failed: " .. tostring(err),
-                Duration = 4,
+                Message = "Location not found",
+                Duration = 3,
                 Type = "Error"
             })
         end
     end
 })
-```
 
----
-
-## ⚡ Performance Tips
-
-1. **Use `spawn()` or `task.spawn()` for loops**
-```lua
-spawn(function()
-    while task.wait(1) do
-        -- Update code
-    end
-end)
-```
-
-2. **Store references to frequently updated components**
-```lua
-local StatusLabel = Tab:CreateLabel({Text = "Status"})
--- Much better than recreating each time
-```
-
-3. **Disconnect connections when toggles are off**
-```lua
-local connection
-Toggle:Callback(function(value)
-    if value then
-        connection = game:GetService("RunService").Heartbeat:Connect(function()
-            -- Code
-        end)
-    else
-        if connection then
-            connection:Disconnect()
+local locationNameInput = TeleportTab:CreateTextInput({
+    Name = "Location Name",
+    PlaceholderText = "Enter name for current position...",
+    Callback = function(text)
+        if text and text ~= "" then
+            local player = Players.LocalPlayer
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                savedLocations[text] = player.Character.HumanoidRootPart.Position
+                updateLocationDropdown(teleportDropdown)
+                
+                Window:Notify({
+                    Title = "Location Saved",
+                    Message = "Saved location: " .. text,
+                    Duration = 3,
+                    Type = "Success"
+                })
+            end
         end
     end
-end)
-```
-
-4. **Batch notifications instead of spamming**
-```lua
--- Bad: Multiple instant notifications
--- Good: Delayed or single summary notification
-```
-
----
-
-## 🎯 Complete Template
-
-```lua
--- Load library
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/1kJf0GJD"))()
-
--- Create window
-local Window = Library:CreateWindow({
-    Name = "My Script Hub",
-    Theme = "Dark"
 })
 
--- Create tab
-local MainTab = Window:CreateTab("Main")
+-- ═══════════════════════════════════════════════════════════════
+-- COMBAT TAB - PvP Features
+-- ═══════════════════════════════════════════════════════════════
+local CombatTab = Window:CreateTab("Combat")
 
--- Add components
-MainTab:CreateLabel({Text = "Welcome!"})
+CombatTab:CreateLabel({
+    Text = "Combat enhancements and targeting"
+})
 
-MainTab:CreateButton({
-    Name = "Click Me",
-    Callback = function()
+-- Target player system
+local function getPlayerList()
+    local players = {}
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            table.insert(players, player.Name)
+        end
+    end
+    return #players > 0 and players or {"No Players"}
+end
+
+local targetDropdown = CombatTab:CreateDropdown({
+    Name = "Target Player",
+    Options = getPlayerList(),
+    Default = getPlayerList()[1],
+    Callback = function(value)
         Window:Notify({
-            Title = "Clicked",
-            Message = "Button was pressed",
+            Title = "Target Set",
+            Message = "Targeting: " .. value,
+            Duration = 2,
+            Type = "Info"
+        })
+    end
+})
+
+-- Update player list every 5 seconds
+spawn(function()
+    while task.wait(5) do
+        targetDropdown:Refresh(getPlayerList())
+    end
+end)
+
+CombatTab:CreateButton({
+    Name = "Teleport to Target",
+    Callback = function()
+        local targetName = targetDropdown:GetValue()
+        local targetPlayer = Players:FindFirstChild(targetName)
+        
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local player = Players.LocalPlayer
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+                
+                Window:Notify({
+                    Title = "Teleported",
+                    Message = "Teleported to " .. targetName,
+                    Duration = 2,
+                    Type = "Success"
+                })
+            end
+        else
+            Window:Notify({
+                Title = "Target Not Found",
+                Message = targetName .. " is not available",
+                Duration = 3,
+                Type = "Error"
+            })
+        end
+    end
+})
+
+local reachEnabled = false
+CombatTab:CreateToggle({
+    Name = "Extended Reach (Demo)",
+    Default = false,
+    Callback = function(value)
+        reachEnabled = value
+        Window:Notify({
+            Title = "Extended Reach",
+            Message = value and "Enabled (Demo only)" or "Disabled",
+            Duration = 2,
+            Type = value and "Warning" or "Info"
+        })
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- VISUAL TAB - Enhanced Visuals
+-- ═══════════════════════════════════════════════════════════════
+local VisualTab = Window:CreateTab("Visual")
+
+VisualTab:CreateLabel({
+    Text = "Visual enhancements and effects"
+})
+
+-- Lighting presets
+local lightingPresets = {
+    ["Default"] = {brightness = 1, ambient = Color3.new(0, 0, 0)},
+    ["Bright"] = {brightness = 3, ambient = Color3.new(1, 1, 1)},
+    ["Sunset"] = {brightness = 1.5, ambient = Color3.fromRGB(255, 150, 100)},
+    ["Night"] = {brightness = 0.5, ambient = Color3.fromRGB(50, 50, 80)}
+}
+
+VisualTab:CreateDropdown({
+    Name = "Lighting Preset",
+    Options = {"Default", "Bright", "Sunset", "Night"},
+    Default = "Default",
+    Callback = function(value)
+        local preset = lightingPresets[value]
+        local lighting = game:GetService("Lighting")
+        
+        lighting.Brightness = preset.brightness
+        lighting.Ambient = preset.ambient
+        
+        Window:Notify({
+            Title = "Lighting Changed",
+            Message = "Applied " .. value .. " preset",
             Duration = 2,
             Type = "Success"
         })
     end
 })
 
-MainTab:CreateToggle({
-    Name = "Feature",
+VisualTab:CreateSlider({
+    Name = "Field of View",
+    Range = {70, 120},
+    Default = 70,
+    Callback = function(value)
+        workspace.CurrentCamera.FieldOfView = value
+    end
+})
+
+local espEnabled = false
+VisualTab:CreateToggle({
+    Name = "Player ESP (Demo)",
     Default = false,
     Callback = function(value)
-        print("Toggle:", value)
+        espEnabled = value
+        Window:Notify({
+            Title = "ESP",
+            Message = value and "ESP enabled (Demo)" or "ESP disabled",
+            Duration = 2,
+            Type = value and "Success" or "Info"
+        })
     end
 })
 
-MainTab:CreateSlider({
-    Name = "Value",
-    Range = {0, 100},
-    Default = 50,
+-- ═══════════════════════════════════════════════════════════════
+-- SETTINGS TAB - Configuration
+-- ═══════════════════════════════════════════════════════════════
+local SettingsTab = Window:CreateTab("Settings")
+
+SettingsTab:CreateLabel({
+    Text = "UI and script settings"
+})
+
+SettingsTab:CreateDropdown({
+    Name = "Theme Preview",
+    Options = {"Dark", "Serenity", "Forest", "Mocha", "Crimson"},
+    Default = "Mocha",
     Callback = function(value)
-        print("Slider:", value)
+        Window:Notify({
+            Title = "Theme Info",
+            Message = "Restart with Theme='" .. value .. "' to apply",
+            Duration = 4,
+            Type = "Info"
+        })
     end
 })
 
-MainTab:CreateDropdown({
-    Name = "Options",
-    Options = {"A", "B", "C"},
-    Default = "A",
-    Callback = function(value)
-        print("Selected:", value)
+-- Performance monitoring
+local fpsLabel = SettingsTab:CreateLabel({
+    Text = "FPS: Calculating..."
+})
+
+local pingLabel = SettingsTab:CreateLabel({
+    Text = "Ping: Calculating..."
+})
+
+spawn(function()
+    local lastUpdate = tick()
+    local frames = 0
+    
+    RunService.RenderStepped:Connect(function()
+        frames = frames + 1
+        
+        if tick() - lastUpdate >= 1 then
+            pcall(function()
+                fpsLabel:SetText("FPS: " .. tostring(frames))
+                
+                local ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
+                pingLabel:SetText("Ping: " .. math.floor(ping) .. " ms")
+            end)
+            frames = 0
+            lastUpdate = tick()
+        end
+    end)
+end)
+
+SettingsTab:CreateLabel({
+    Text = "━━━━━━━━━━━━━━━━━━━━━━━"
+})
+
+SettingsTab:CreateButton({
+    Name = "Test All Notifications",
+    Callback = function()
+        Window:Notify({Title = "Info", Message = "Information notification", Duration = 2, Type = "Info"})
+        task.wait(0.5)
+        Window:Notify({Title = "Success", Message = "Success notification", Duration = 2, Type = "Success"})
+        task.wait(0.5)
+        Window:Notify({Title = "Warning", Message = "Warning notification", Duration = 2, Type = "Warning"})
+        task.wait(0.5)
+        Window:Notify({Title = "Error", Message = "Error notification", Duration = 2, Type = "Error"})
     end
 })
 
--- Final notification
+SettingsTab:CreateButton({
+    Name = "Rejoin Server",
+    Callback = function()
+        Window:Notify({
+            Title = "Rejoining",
+            Message = "Reconnecting to server...",
+            Duration = 2,
+            Type = "Info"
+        })
+        
+        task.wait(1)
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+    end
+})
+
+SettingsTab:CreateButton({
+    Name = "Close UI",
+    Callback = function()
+        local CoreGui = game:GetService("CoreGui")
+        local gui = CoreGui:FindFirstChild("ModernUILibrary") or Players.LocalPlayer.PlayerGui:FindFirstChild("ModernUILibrary")
+        
+        if gui then
+            Window:Notify({
+                Title = "Closing",
+                Message = "Goodbye!",
+                Duration = 1,
+                Type = "Info"
+            })
+            
+            task.wait(1)
+            gui:Destroy()
+        end
+    end
+})
+
+-- Final setup notification
+task.wait(1)
 Window:Notify({
-    Title = "Loaded",
-    Message = "Script ready!",
+    Title = "Setup Complete",
+    Message = "All systems ready. Enjoy!",
     Duration = 3,
     Type = "Success"
 })
-```
 
----
-
-## 🔗 Useful Resources
-
-- **Full Documentation:** See README.md
-- **Demo Script:** Example implementation
-- **Advanced Examples:** Complex usage patterns
-- **GitHub:** [Your Repository Link]
-
----
-
-## 📞 Support
-
-- **Issues:** Report on GitHub
-- **Discord:** [Your Server]
-- **Updates:** Follow repository for new features
-
----
-
-**Made with ❤️ using Zinc Library**
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("  Advanced Example Script Loaded Successfully!")
+print("  Featuring: Presets, Teleports, Dynamic Dropdowns")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
