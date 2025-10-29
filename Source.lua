@@ -1077,6 +1077,5 @@ function Library:CreateWindow(config)
     end
     
     return Window
-end
-
-return Library
+    end
+    return Library
