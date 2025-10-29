@@ -1,85 +1,150 @@
 --[[
-    Zinc Library - Advanced Example Script
+    Modern UI Library - Standalone Demo Script
     
-    This script demonstrates advanced usage patterns and real-world scenarios
-    for the Zinc UI Library.
+    This is a complete demonstration script that showcases all features
+    of the Modern UI Library.
     
-    Features:
-    - Player ESP system
-    - Auto-farm with dropdown selection
-    - Settings persistence (in-memory)
-    - Dynamic player list
-    - Keybind system
-    - Advanced notifications
+    Usage:
+    1. Load the library first
+    2. Run this demo script
+    
+    Example:
+    local Library = loadstring(game:HttpGet("YOUR_GITHUB_LINK_HERE"))()
+    -- Then paste this demo script below
 ]]
 
--- Load the library
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/1kJf0GJD"))()
+-- Load the library from Pastebin with error checking
+local Library
+local success, err = pcall(function()
+    Library = loadstring(game:HttpGet("https://pastebin.com/raw/1kJf0GJD"))()
+end)
+
+if not success then
+    warn("Failed to load library:", err)
+    return
+end
+
+if not Library then
+    warn("Library loaded but returned nil. Check if the Pastebin content is correct.")
+    return
+end
+
+if not Library.CreateWindow then
+    warn("Library loaded but CreateWindow function not found. Library may be incomplete.")
+    return
+end
+
+print("✓ Library loaded successfully!")
 
 -- Services
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- Create window with Mocha theme for a unique look
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+print("  Modern UI Library v1.0 - Demo Script")
+print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+-- Create the main window
 local Window = Library:CreateWindow({
-    Name = "Advanced Example Hub",
-    Theme = "Mocha" -- Try "Crimson" for a bold look!
+    Name = "Modern UI Demo v1.0",
+    Theme = "Dark" -- Options: "Dark", "Serenity", "Forest", "Mocha", "Crimson", "Ocean", "Royal"
 })
 
--- Welcome notification
-Window:Notify({
-    Title = "Welcome!",
-    Message = "Advanced example script loaded successfully",
-    Duration = 4,
-    Type = "Success"
-})
+print("✓ Window created!")
 
 -- ═══════════════════════════════════════════════════════════════
--- PLAYER TAB - Advanced Player Modifications
+-- TAB 1: MAIN FEATURES
 -- ═══════════════════════════════════════════════════════════════
-local PlayerTab = Window:CreateTab("Player")
+local MainTab = Window:CreateTab("Main")
 
-PlayerTab:CreateLabel({
-    Text = "Character Modifications"
+MainTab:CreateLabel({
+    Text = "Welcome! This demo showcases all UI components."
 })
 
--- Preset dropdown for common configurations
-local presets = {
-    ["Default"] = {walkspeed = 16, jumppower = 50, fov = 70},
-    ["Speed Runner"] = {walkspeed = 50, jumppower = 80, fov = 90},
-    ["Explorer"] = {walkspeed = 30, jumppower = 100, fov = 85},
-    ["Combat"] = {walkspeed = 25, jumppower = 60, fov = 80}
-}
-
-local currentPreset = "Default"
-
-PlayerTab:CreateDropdown({
-    Name = "Quick Presets",
-    Options = {"Default", "Speed Runner", "Explorer", "Combat"},
-    Default = "Default",
-    Callback = function(value)
-        currentPreset = value
-        local preset = presets[value]
-        
-        local player = Players.LocalPlayer
-        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-            player.Character.Humanoid.WalkSpeed = preset.walkspeed
-            player.Character.Humanoid.JumpPower = preset.jumppower
-            workspace.CurrentCamera.FieldOfView = preset.fov
-            
-            Window:Notify({
-                Title = "Preset Applied",
-                Message = "Loaded " .. value .. " configuration",
-                Duration = 2,
-                Type = "Success"
-            })
-        end
+MainTab:CreateButton({
+    Name = "Test Notification",
+    Callback = function()
+        print("Button clicked!")
+        Window:Notify({
+            Title = "Success!",
+            Message = "Button callback executed successfully.",
+            Duration = 3,
+            Type = "Success"
+        })
     end
 })
 
--- Individual controls for fine-tuning
-local walkspeedSlider = PlayerTab:CreateSlider({
+MainTab:CreateButton({
+    Name = "Test All Notifications",
+    Callback = function()
+        Window:Notify({
+            Title = "Info",
+            Message = "This is an info notification",
+            Duration = 3,
+            Type = "Info"
+        })
+        
+        task.wait(0.5)
+        
+        Window:Notify({
+            Title = "Success",
+            Message = "This is a success notification",
+            Duration = 3,
+            Type = "Success"
+        })
+        
+        task.wait(0.5)
+        
+        Window:Notify({
+            Title = "Warning",
+            Message = "This is a warning notification",
+            Duration = 3,
+            Type = "Warning"
+        })
+        
+        task.wait(0.5)
+        
+        Window:Notify({
+            Title = "Error",
+            Message = "This is an error notification",
+            Duration = 3,
+            Type = "Error"
+        })
+    end
+})
+
+local testToggle = MainTab:CreateToggle({
+    Name = "Example Toggle",
+    Default = false,
+    Callback = function(value)
+        print("Toggle state:", value)
+        Window:Notify({
+            Title = "Toggle Update",
+            Message = "State: " .. tostring(value),
+            Duration = 2,
+            Type = "Info"
+        })
+    end
+})
+
+-- Dropdown demo
+local selectedWeapon = MainTab:CreateDropdown({
+    Name = "Select Weapon",
+    Options = {"Sword", "Bow", "Staff", "Axe", "Dagger"},
+    Default = "Sword",
+    Callback = function(value)
+        print("Selected weapon:", value)
+        Window:Notify({
+            Title = "Weapon Changed",
+            Message = "Now using: " .. value,
+            Duration = 2,
+            Type = "Info"
+        })
+    end
+})
+
+local walkspeedSlider = MainTab:CreateSlider({
     Name = "Walkspeed",
     Range = {16, 100},
     Default = 16,
@@ -91,7 +156,38 @@ local walkspeedSlider = PlayerTab:CreateSlider({
     end
 })
 
-local jumppowerSlider = PlayerTab:CreateSlider({
+MainTab:CreateTextInput({
+    Name = "Text Input Demo",
+    PlaceholderText = "Type and press Enter...",
+    Callback = function(text)
+        print("User entered:", text)
+        Window:Notify({
+            Title = "Text Received",
+            Message = text,
+            Duration = 3,
+            Type = "Success"
+        })
+    end
+})
+
+MainTab:CreateButton({
+    Name = "Reset Walkspeed",
+    Callback = function()
+        walkspeedSlider:SetValue(16)
+        print("Walkspeed reset")
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- TAB 2: PLAYER MODIFICATIONS
+-- ═══════════════════════════════════════════════════════════════
+local PlayerTab = Window:CreateTab("Player")
+
+PlayerTab:CreateLabel({
+    Text = "Modify your character's properties"
+})
+
+PlayerTab:CreateSlider({
     Name = "Jump Power",
     Range = {50, 200},
     Default = 50,
@@ -103,23 +199,12 @@ local jumppowerSlider = PlayerTab:CreateSlider({
     end
 })
 
--- Advanced features
-PlayerTab:CreateLabel({
-    Text = "Advanced Features"
-})
-
 local infiniteJumpEnabled = false
 PlayerTab:CreateToggle({
     Name = "Infinite Jump",
     Default = false,
     Callback = function(value)
         infiniteJumpEnabled = value
-        Window:Notify({
-            Title = "Infinite Jump",
-            Message = value and "Enabled" or "Disabled",
-            Duration = 2,
-            Type = value and "Success" or "Info"
-        })
     end
 })
 
@@ -152,13 +237,6 @@ PlayerTab:CreateToggle({
                     end
                 end
             end)
-            
-            Window:Notify({
-                Title = "Noclip",
-                Message = "Walk through walls enabled",
-                Duration = 2,
-                Type = "Success"
-            })
         else
             if noclipConnection then
                 noclipConnection:Disconnect()
@@ -172,222 +250,11 @@ PlayerTab:CreateToggle({
                     end
                 end
             end
-            
-            Window:Notify({
-                Title = "Noclip",
-                Message = "Collision restored",
-                Duration = 2,
-                Type = "Info"
-            })
         end
     end
 })
 
--- ═══════════════════════════════════════════════════════════════
--- TELEPORT TAB - Location Management
--- ═══════════════════════════════════════════════════════════════
-local TeleportTab = Window:CreateTab("Teleport")
-
-TeleportTab:CreateLabel({
-    Text = "Save and teleport to custom locations"
-})
-
--- Saved locations system
-local savedLocations = {
-    ["Spawn"] = Vector3.new(0, 10, 0)
-}
-
-local function updateLocationDropdown(dropdown)
-    local locationNames = {}
-    for name, _ in pairs(savedLocations) do
-        table.insert(locationNames, name)
-    end
-    table.sort(locationNames)
-    dropdown:Refresh(locationNames)
-end
-
-local teleportDropdown = TeleportTab:CreateDropdown({
-    Name = "Saved Locations",
-    Options = {"Spawn"},
-    Default = "Spawn",
-    Callback = function(value)
-        -- Selection changed
-    end
-})
-
-TeleportTab:CreateButton({
-    Name = "Teleport to Selected",
-    Callback = function()
-        local selected = teleportDropdown:GetValue()
-        local position = savedLocations[selected]
-        
-        if position then
-            local player = Players.LocalPlayer
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character.HumanoidRootPart.CFrame = CFrame.new(position)
-                
-                Window:Notify({
-                    Title = "Teleported",
-                    Message = "Teleported to " .. selected,
-                    Duration = 2,
-                    Type = "Success"
-                })
-            end
-        else
-            Window:Notify({
-                Title = "Error",
-                Message = "Location not found",
-                Duration = 3,
-                Type = "Error"
-            })
-        end
-    end
-})
-
-local locationNameInput = TeleportTab:CreateTextInput({
-    Name = "Location Name",
-    PlaceholderText = "Enter name for current position...",
-    Callback = function(text)
-        if text and text ~= "" then
-            local player = Players.LocalPlayer
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                savedLocations[text] = player.Character.HumanoidRootPart.Position
-                updateLocationDropdown(teleportDropdown)
-                
-                Window:Notify({
-                    Title = "Location Saved",
-                    Message = "Saved location: " .. text,
-                    Duration = 3,
-                    Type = "Success"
-                })
-            end
-        end
-    end
-})
-
--- ═══════════════════════════════════════════════════════════════
--- COMBAT TAB - PvP Features
--- ═══════════════════════════════════════════════════════════════
-local CombatTab = Window:CreateTab("Combat")
-
-CombatTab:CreateLabel({
-    Text = "Combat enhancements and targeting"
-})
-
--- Target player system
-local function getPlayerList()
-    local players = {}
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= Players.LocalPlayer then
-            table.insert(players, player.Name)
-        end
-    end
-    return #players > 0 and players or {"No Players"}
-end
-
-local targetDropdown = CombatTab:CreateDropdown({
-    Name = "Target Player",
-    Options = getPlayerList(),
-    Default = getPlayerList()[1],
-    Callback = function(value)
-        Window:Notify({
-            Title = "Target Set",
-            Message = "Targeting: " .. value,
-            Duration = 2,
-            Type = "Info"
-        })
-    end
-})
-
--- Update player list every 5 seconds
-spawn(function()
-    while task.wait(5) do
-        targetDropdown:Refresh(getPlayerList())
-    end
-end)
-
-CombatTab:CreateButton({
-    Name = "Teleport to Target",
-    Callback = function()
-        local targetName = targetDropdown:GetValue()
-        local targetPlayer = Players:FindFirstChild(targetName)
-        
-        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local player = Players.LocalPlayer
-            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-                player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                
-                Window:Notify({
-                    Title = "Teleported",
-                    Message = "Teleported to " .. targetName,
-                    Duration = 2,
-                    Type = "Success"
-                })
-            end
-        else
-            Window:Notify({
-                Title = "Target Not Found",
-                Message = targetName .. " is not available",
-                Duration = 3,
-                Type = "Error"
-            })
-        end
-    end
-})
-
-local reachEnabled = false
-CombatTab:CreateToggle({
-    Name = "Extended Reach (Demo)",
-    Default = false,
-    Callback = function(value)
-        reachEnabled = value
-        Window:Notify({
-            Title = "Extended Reach",
-            Message = value and "Enabled (Demo only)" or "Disabled",
-            Duration = 2,
-            Type = value and "Warning" or "Info"
-        })
-    end
-})
-
--- ═══════════════════════════════════════════════════════════════
--- VISUAL TAB - Enhanced Visuals
--- ═══════════════════════════════════════════════════════════════
-local VisualTab = Window:CreateTab("Visual")
-
-VisualTab:CreateLabel({
-    Text = "Visual enhancements and effects"
-})
-
--- Lighting presets
-local lightingPresets = {
-    ["Default"] = {brightness = 1, ambient = Color3.new(0, 0, 0)},
-    ["Bright"] = {brightness = 3, ambient = Color3.new(1, 1, 1)},
-    ["Sunset"] = {brightness = 1.5, ambient = Color3.fromRGB(255, 150, 100)},
-    ["Night"] = {brightness = 0.5, ambient = Color3.fromRGB(50, 50, 80)}
-}
-
-VisualTab:CreateDropdown({
-    Name = "Lighting Preset",
-    Options = {"Default", "Bright", "Sunset", "Night"},
-    Default = "Default",
-    Callback = function(value)
-        local preset = lightingPresets[value]
-        local lighting = game:GetService("Lighting")
-        
-        lighting.Brightness = preset.brightness
-        lighting.Ambient = preset.ambient
-        
-        Window:Notify({
-            Title = "Lighting Changed",
-            Message = "Applied " .. value .. " preset",
-            Duration = 2,
-            Type = "Success"
-        })
-    end
-})
-
-VisualTab:CreateSlider({
+PlayerTab:CreateSlider({
     Name = "Field of View",
     Range = {70, 120},
     Default = 70,
@@ -396,51 +263,336 @@ VisualTab:CreateSlider({
     end
 })
 
-local espEnabled = false
+PlayerTab:CreateButton({
+    Name = "Respawn Character",
+    Callback = function()
+        local player = Players.LocalPlayer
+        if player and player.Character then
+            player.Character:BreakJoints()
+        end
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- TAB 3: VISUAL EFFECTS
+-- ═══════════════════════════════════════════════════════════════
+local VisualTab = Window:CreateTab("Visual")
+
+VisualTab:CreateLabel({
+    Text = "Visual modifications and effects"
+})
+
+-- Dropdown for visual presets
+VisualTab:CreateDropdown({
+    Name = "Visual Preset",
+    Options = {"Default", "Performance", "Quality", "Cinematic"},
+    Default = "Default",
+    Callback = function(value)
+        print("Visual preset:", value)
+        Window:Notify({
+            Title = "Preset Applied",
+            Message = "Switched to " .. value .. " mode",
+            Duration = 2,
+            Type = "Success"
+        })
+    end
+})
+
+local fullbrightEnabled = false
+local originalAmbient
+local originalBrightness
+
 VisualTab:CreateToggle({
-    Name = "Player ESP (Demo)",
+    Name = "Fullbright",
     Default = false,
     Callback = function(value)
-        espEnabled = value
+        fullbrightEnabled = value
+        local lighting = game:GetService("Lighting")
+        
+        if fullbrightEnabled then
+            originalAmbient = lighting.Ambient
+            originalBrightness = lighting.Brightness
+            lighting.Ambient = Color3.new(1, 1, 1)
+            lighting.Brightness = 2
+            lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+            Window:Notify({
+                Title = "Fullbright",
+                Message = "Fullbright enabled",
+                Duration = 2,
+                Type = "Success"
+            })
+        else
+            if originalAmbient then
+                lighting.Ambient = originalAmbient
+            end
+            if originalBrightness then
+                lighting.Brightness = originalBrightness
+            end
+            Window:Notify({
+                Title = "Fullbright",
+                Message = "Fullbright disabled",
+                Duration = 2,
+                Type = "Info"
+            })
+        end
+    end
+})
+
+VisualTab:CreateSlider({
+    Name = "Character Transparency",
+    Range = {0, 100},
+    Default = 0,
+    Callback = function(value)
+        local transparency = value / 100
+        local player = Players.LocalPlayer
+        
+        if player and player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    part.Transparency = transparency
+                    if part.Name == "Head" then
+                        part.face.Transparency = transparency
+                    end
+                end
+            end
+        end
+    end
+})
+
+VisualTab:CreateButton({
+    Name = "Remove Fog",
+    Callback = function()
+        local lighting = game:GetService("Lighting")
+        lighting.FogEnd = 100000
+        lighting.FogStart = 0
         Window:Notify({
-            Title = "ESP",
-            Message = value and "ESP enabled (Demo)" or "ESP disabled",
+            Title = "Fog Removed",
+            Message = "Environmental fog has been cleared.",
             Duration = 2,
-            Type = value and "Success" or "Info"
+            Type = "Success"
+        })
+    end
+})
+
+VisualTab:CreateButton({
+    Name = "Remove Shadows",
+    Callback = function()
+        local lighting = game:GetService("Lighting")
+        lighting.GlobalShadows = false
+        Window:Notify({
+            Title = "Shadows Removed",
+            Message = "All shadows have been disabled.",
+            Duration = 2,
+            Type = "Success"
         })
     end
 })
 
 -- ═══════════════════════════════════════════════════════════════
--- SETTINGS TAB - Configuration
+-- TAB 4: TESTING & EXAMPLES
 -- ═══════════════════════════════════════════════════════════════
-local SettingsTab = Window:CreateTab("Settings")
+local TestTab = Window:CreateTab("Examples")
 
-SettingsTab:CreateLabel({
-    Text = "UI and script settings"
+TestTab:CreateLabel({
+    Text = "Interactive examples and component tests"
 })
 
-SettingsTab:CreateDropdown({
-    Name = "Theme Preview",
+-- Dropdown example with dynamic options
+local fruitDropdown = TestTab:CreateDropdown({
+    Name = "Select Fruit",
+    Options = {"Apple", "Banana", "Orange", "Grape", "Mango"},
+    Default = "Apple",
+    Callback = function(value)
+        print("Selected fruit:", value)
+    end
+})
+
+TestTab:CreateButton({
+    Name = "Add Strawberry to Fruits",
+    Callback = function()
+        fruitDropdown:Refresh({"Apple", "Banana", "Orange", "Grape", "Mango", "Strawberry"})
+        Window:Notify({
+            Title = "Dropdown Updated",
+            Message = "Strawberry has been added!",
+            Duration = 2,
+            Type = "Success"
+        })
+    end
+})
+
+local counter = 0
+local counterLabel = TestTab:CreateLabel({
+    Text = "Counter: 0"
+})
+
+TestTab:CreateButton({
+    Name = "Increment Counter (+1)",
+    Callback = function()
+        counter = counter + 1
+        counterLabel:SetText("Counter: " .. tostring(counter))
+    end
+})
+
+TestTab:CreateButton({
+    Name = "Decrement Counter (-1)",
+    Callback = function()
+        counter = counter - 1
+        counterLabel:SetText("Counter: " .. tostring(counter))
+    end
+})
+
+TestTab:CreateButton({
+    Name = "Reset Counter",
+    Callback = function()
+        counter = 0
+        counterLabel:SetText("Counter: 0")
+    end
+})
+
+local savedText = ""
+local savedTextLabel = TestTab:CreateLabel({
+    Text = "No text saved"
+})
+
+TestTab:CreateTextInput({
+    Name = "Save Text",
+    PlaceholderText = "Enter text to save...",
+    Callback = function(text)
+        savedText = text
+        savedTextLabel:SetText("Saved: " .. text)
+    end
+})
+
+TestTab:CreateToggle({
+    Name = "Option A",
+    Default = false,
+    Callback = function(value)
+        print("Option A:", value)
+    end
+})
+
+TestTab:CreateToggle({
+    Name = "Option B",
+    Default = true,
+    Callback = function(value)
+        print("Option B:", value)
+    end
+})
+
+TestTab:CreateSlider({
+    Name = "Value Range",
+    Range = {0, 10},
+    Default = 5,
+    Callback = function(value)
+        print("Value:", value)
+    end
+})
+
+-- ═══════════════════════════════════════════════════════════════
+-- TAB 5: INFO & SETTINGS
+-- ═══════════════════════════════════════════════════════════════
+local InfoTab = Window:CreateTab("Info")
+
+InfoTab:CreateLabel({
+    Text = "Library Information & Credits"
+})
+
+InfoTab:CreateLabel({
+    Text = "Version: 1.0.0"
+})
+
+InfoTab:CreateLabel({
+    Text = "Compatible with all client-side executors"
+})
+
+InfoTab:CreateLabel({
+    Text = "━━━━━━━━━━━━━━━━━━━━━━━"
+})
+
+InfoTab:CreateLabel({
+    Text = "Available Themes:"
+})
+
+InfoTab:CreateDropdown({
+    Name = "Theme Selector",
     Options = {"Dark", "Serenity", "Forest", "Mocha", "Crimson"},
-    Default = "Mocha",
+    Default = "Dark",
     Callback = function(value)
         Window:Notify({
             Title = "Theme Info",
-            Message = "Restart with Theme='" .. value .. "' to apply",
+            Message = "Set Theme='" .. value .. "' when creating window to use this theme!",
+            Duration = 5,
+            Type = "Info"
+        })
+    end
+})
+
+InfoTab:CreateButton({
+    Name = "Dark Theme Info",
+    Callback = function()
+        Window:Notify({
+            Title = "Dark Theme",
+            Message = "Modern dark theme with blue accents - Default theme",
             Duration = 4,
             Type = "Info"
         })
     end
 })
 
--- Performance monitoring
-local fpsLabel = SettingsTab:CreateLabel({
-    Text = "FPS: Calculating..."
+InfoTab:CreateButton({
+    Name = "Serenity Theme Info",
+    Callback = function()
+        Window:Notify({
+            Title = "Serenity Theme",
+            Message = "Clean white theme for light mode lovers",
+            Duration = 4,
+            Type = "Info"
+        })
+    end
 })
 
-local pingLabel = SettingsTab:CreateLabel({
-    Text = "Ping: Calculating..."
+InfoTab:CreateButton({
+    Name = "Forest Theme Info",
+    Callback = function()
+        Window:Notify({
+            Title = "Forest Theme",
+            Message = "Nature-inspired green theme",
+            Duration = 4,
+            Type = "Info"
+        })
+    end
+})
+
+InfoTab:CreateButton({
+    Name = "Mocha Theme Info",
+    Callback = function()
+        Window:Notify({
+            Title = "Mocha Theme",
+            Message = "Warm earthy tones with sage and terracotta accents",
+            Duration = 4,
+            Type = "Info"
+        })
+    end
+})
+
+InfoTab:CreateButton({
+    Name = "Crimson Theme Info",
+    Callback = function()
+        Window:Notify({
+            Title = "Crimson Theme",
+            Message = "Bold red theme with dark background",
+            Duration = 4,
+            Type = "Info"
+        })
+    end
+})
+
+InfoTab:CreateLabel({
+    Text = "━━━━━━━━━━━━━━━━━━━━━━━"
+})
+
+local fpsLabel = InfoTab:CreateLabel({
+    Text = "FPS: Calculating..."
 })
 
 spawn(function()
@@ -453,9 +605,6 @@ spawn(function()
         if tick() - lastUpdate >= 1 then
             pcall(function()
                 fpsLabel:SetText("FPS: " .. tostring(frames))
-                
-                local ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
-                pingLabel:SetText("Ping: " .. math.floor(ping) .. " ms")
             end)
             frames = 0
             lastUpdate = tick()
@@ -463,68 +612,36 @@ spawn(function()
     end)
 end)
 
-SettingsTab:CreateLabel({
+InfoTab:CreateLabel({
     Text = "━━━━━━━━━━━━━━━━━━━━━━━"
 })
 
-SettingsTab:CreateButton({
-    Name = "Test All Notifications",
-    Callback = function()
-        Window:Notify({Title = "Info", Message = "Information notification", Duration = 2, Type = "Info"})
-        task.wait(0.5)
-        Window:Notify({Title = "Success", Message = "Success notification", Duration = 2, Type = "Success"})
-        task.wait(0.5)
-        Window:Notify({Title = "Warning", Message = "Warning notification", Duration = 2, Type = "Warning"})
-        task.wait(0.5)
-        Window:Notify({Title = "Error", Message = "Error notification", Duration = 2, Type = "Error"})
-    end
-})
-
-SettingsTab:CreateButton({
-    Name = "Rejoin Server",
-    Callback = function()
-        Window:Notify({
-            Title = "Rejoining",
-            Message = "Reconnecting to server...",
-            Duration = 2,
-            Type = "Info"
-        })
-        
-        task.wait(1)
-        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
-    end
-})
-
-SettingsTab:CreateButton({
+InfoTab:CreateButton({
     Name = "Close UI",
     Callback = function()
-        local CoreGui = game:GetService("CoreGui")
-        local gui = CoreGui:FindFirstChild("ModernUILibrary") or Players.LocalPlayer.PlayerGui:FindFirstChild("ModernUILibrary")
-        
-        if gui then
-            Window:Notify({
-                Title = "Closing",
-                Message = "Goodbye!",
-                Duration = 1,
-                Type = "Info"
-            })
+        pcall(function()
+            local CoreGui = game:GetService("CoreGui")
+            local gui = CoreGui:FindFirstChild("ModernUILibrary")
+            if not gui then
+                gui = Players.LocalPlayer.PlayerGui:FindFirstChild("ModernUILibrary")
+            end
             
-            task.wait(1)
-            gui:Destroy()
-        end
+            if gui then
+                gui:Destroy()
+                print("UI closed successfully")
+            end
+        end)
     end
 })
 
--- Final setup notification
-task.wait(1)
+-- Final notification
 Window:Notify({
-    Title = "Setup Complete",
-    Message = "All systems ready. Enjoy!",
-    Duration = 3,
+    Title = "UI Library Loaded!",
+    Message = "Modern UI Library v1.0 is ready. Explore all tabs!",
+    Duration = 5,
     Type = "Success"
 })
 
-print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-print("  Advanced Example Script Loaded Successfully!")
-print("  Featuring: Presets, Teleports, Dynamic Dropdowns")
+print("✓ All tabs and components loaded successfully!")
+print("✓ Demo complete!")
 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
