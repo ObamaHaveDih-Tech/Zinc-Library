@@ -148,6 +148,8 @@ Label:SetText("New text")
 | `Forest` | Nature-inspired green |
 | `Mocha` | Warm earthy tones |
 | `Crimson` | Bold red theme |
+| `Ocean` | Calm aquatic blues ✨ NEW |
+| `Royal` | Luxury gold accents ✨ NEW |
 
 ---
 
