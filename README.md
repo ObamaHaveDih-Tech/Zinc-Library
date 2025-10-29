@@ -3,7 +3,20 @@
 ## 📌 Loading the Library
 
 ```lua
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/1kJf0GJD"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/ObamaHaveDih-Tech/Zinc-Library/refs/heads/main/Source.lua"))()
+```
+
+This points directly to your GitHub repository's `Source.lua` file, which should contain the main library code (the first artifact).
+
+## 📦 **Repository Structure Recommendation:**
+```
+Zinc-Library/
+├── Source.lua              (Main library - Artifact 1)
+├── Demo.lua                (Demo script - Artifact 2)
+├── AdvancedExample.lua     (Advanced example - Artifact 3)
+├── README.md               (GitHub README - Artifact 6)
+├── DOCUMENTATION.md        (Full docs - Artifact 5)
+└── QUICK_REFERENCE.md      (Quick ref - Artifact 4)
 ```
 
 ---
